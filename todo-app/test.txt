@@ -1,0 +1,122 @@
+import { useState } from "react";
+
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+  date: string;
+  category: string;
+};
+
+function App() {
+  const [text, setText] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [category, setCategory] = useState<string>("DSA");
+
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  function addTodo() {
+    if (!text.trim()) return;
+
+    const newTodo: Todo = {
+      id: Date.now(),
+      text: text,
+      completed: false,
+      date: date,
+      category: category,
+    };
+
+    setTodos([...todos, newTodo]);
+
+    setText("");
+    setDate("");
+  }
+
+  function deleteTodo(id: number) {
+    setTodos(
+      todos.filter((todo) => todo.id !== id)
+    );
+  }
+
+  function toggleTodo(id: number) {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id
+          ? {
+              ...todo,
+              completed: !todo.completed,
+            }
+          : todo
+      )
+    );
+  }
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>Todo App</h1>
+
+      <input
+        type="text"
+        placeholder="Enter task"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+      />
+
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+      >
+        <option>DSA</option>
+        <option>College</option>
+        <option>Project</option>
+        <option>Personal</option>
+      </select>
+
+      <button onClick={addTodo}>
+        Add
+      </button>
+
+      <hr />
+
+      {todos.map((todo) => (
+        <div key={todo.id}>
+          <input
+            type="checkbox"
+            checked={todo.completed}
+            onChange={() => toggleTodo(todo.id)}
+          />
+
+          <span
+            style={{
+              textDecoration: todo.completed
+                ? "line-through"
+                : "none",
+            }}
+          >
+            {todo.text}
+          </span>
+
+          <p>{todo.category}</p>
+
+          <p>{todo.date}</p>
+
+          <button
+            onClick={() =>
+              deleteTodo(todo.id)
+            }
+          >
+            Delete
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default App;

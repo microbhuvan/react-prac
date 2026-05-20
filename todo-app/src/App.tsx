@@ -1,8 +1,9 @@
+import SearchItem from "./pages/SearchItem";
 import TodoItem from "./pages/TodoItem";
 
 function App(){
   return (
-    <TodoItem />
+    <SearchItem />
   )
 }
 

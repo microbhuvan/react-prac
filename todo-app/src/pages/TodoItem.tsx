@@ -1,10 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import type { Todo } from "../types/todo";
 
 function TodoItem(){
 
     const [text, setText] = useState<string>("");
-    const [todos, setTodos] = useState<Todo[]>([]);
+    const [todos, setTodos] = useState<Todo[]>(()=>{
+        
+        const stored = localStorage.getItem("todos");
+        return stored ? JSON.parse(stored) : []
+    });
+    const [choice, setChoice] = useState<string>("");
+
+    let filteredTodos = 
+              (choice === "completed")
+            ? todos.filter((todo)=>todo.completed) 
+            : (choice === "pending") 
+            ? todos.filter((todo)=>!todo.completed) 
+            : todos;
 
     let count = todos.length;
     let countIncompleted = todos.filter((todo)=>!todo.completed).length; 
@@ -36,13 +48,16 @@ function TodoItem(){
         )))
     }
 
-    function removeTodo(id: number){{
+    function removeTodo(id: number){
 
         setTodos(todos.filter((todo)=>(
             todo.id !== id 
         )))
-    }}
+    }
 
+    useEffect(()=>{
+        localStorage.setItem("todos", JSON.stringify(todos));
+    },[todos]);
 
     return(
         <>
@@ -56,7 +71,15 @@ function TodoItem(){
             <button onClick={addTodo}>add todo</button>
             <div>Total tasks = {count}</div>
             <div>Incomplete tasks = {countIncompleted}</div>
-            {todos.map((todo)=>(
+
+            <button onClick={()=>setChoice("all")}>all</button>
+            <button onClick={()=>setChoice("completed")}>completed</button>
+            <button onClick={()=>setChoice("pending")}>pending</button>
+
+            
+            
+
+            {filteredTodos.map((todo)=>(
                 <div key={todo.id}>
                     
                     <input
